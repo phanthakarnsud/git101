@@ -36,8 +36,7 @@ test('demo upload', async ({ page,context }) => {
     // 1. เตรียมรอ event download ก่อน
     await page.locator('input[type="file"]').setInputFiles(
     // 2. อัปโหลดไฟล์ไปยัง input[type="file"]
-    path.resolve(process.cwd(), 'downloads', 'download-test-file.txt')
-    );
+    path.resolve(process.cwd(), 'downloads', 'download-test-file.txt'));
     // 3. คลิกปุ่ม submit เพื่ออัปโหลดไฟล์
     await page.locator('input[type="submit"]').click();
     // 4. ตรวจสอบว่า URL เปลี่ยนไปตามที่คาดหวัง
@@ -47,7 +46,7 @@ test('demo upload', async ({ page,context }) => {
  
 
     test.setTimeout(0);
-    await page.pause();
+    await page.pause(); 
 
     
 
