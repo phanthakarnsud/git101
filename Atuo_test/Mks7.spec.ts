@@ -293,39 +293,5 @@ test('make Pinkform', async ({ page }) => {
     await page.getByRole('button', { name: 'ตกลง' }).click();
     const requestNo = await page.locator('.text-medium-emphasis.mb-2').first().textContent();
     console.log('เลขคำขอ:', requestNo?.trim());     
-
-
-
-
-
-
-
-
-
-
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
 });
 
