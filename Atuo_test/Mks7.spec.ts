@@ -1,5 +1,6 @@
 import { test, expect, Page, Locator } from '@playwright/test';
-import os from 'os';
+const TEST_PDF1 = path.join(__dirname, '..', 'test-files', 'ONLY TEST.pdf');
+const TEST_PDF2 = path.join(__dirname, '..', 'test-files', 'SWTECHANDMEDIACOLTD.p12');
 import path from 'path';
 
 
@@ -12,33 +13,32 @@ function today(addDays: number = 0): string {
     date.getFullYear(),
   ].join('/');
 }
-async function selectDate(page: Page, input: Locator, date: string) {
+  async function selectDate(page: Page, input: Locator, date: string) {
   const [day, month, year] = date.split('/').map(Number);
+  const now = new Date();
+
+  // จำนวนเดือนที่ต้องเลื่อน (บวก = ไปข้างหน้า, ลบ = ย้อนหลัง)
+  const diff = (year - now.getFullYear()) * 12 + (month - (now.getMonth() + 1));
 
   await input.click();
 
-  // เลือกปี (ข้ามถ้าเป็นปีปัจจุบัน)
-  if (year !== new Date().getFullYear()) {
-    await page.locator('.dp__month_year_select').last().click();
-    await page.locator('.dp__overlay').getByText(String(year), { exact: true }).click();
-  }
-
-  // เลือกเดือน (ข้ามถ้าเป็นเดือนปัจจุบันของปีปัจจุบัน)
-  const now = new Date();
-  if (year !== now.getFullYear() || month !== now.getMonth() + 1) {
-    await page.locator('.dp__month_year_select').first().click();
-    await page.locator('.dp__overlay .dp__overlay_cell').nth(month - 1).click();
+  // กดลูกศรเลื่อนเดือนตามจำนวนที่คำนวณได้
+  const nextBtn = page.locator('.dp__inner_nav').last();
+  const prevBtn = page.locator('.dp__inner_nav').first();
+  for (let i = 0; i < Math.abs(diff); i++) {
+    await (diff > 0 ? nextBtn : prevBtn).click();
   }
 
   // เลือกวัน
-  await page
+    await page
     .locator('.dp__calendar_item:not(:has(.dp__cell_offset))')
     .getByText(String(day), { exact: true })
     .click();
 
   await expect(input).toHaveValue(date);
   
-    }
+  }
+
     async function fillAndConfirm(input: Locator, value: string) {
         await expect(async () => {
         await input.fill(value);
@@ -48,7 +48,7 @@ async function selectDate(page: Page, input: Locator, date: string) {
     }
 
 
-test('make Pinkform', async ({ page }) => {
+test('make Mks', async ({ page }) => {
     await page.goto('https://submission-sit.thainsw.net/submission/sign-in?id=pbo2uRaPgdg9Sd1uM0zzJtb2N6Tj8HdfW3rtm/ia5t4=&profileName=X9BGhh7Ic0ieQl/eZAFWog==&email=QYNFjVme700jr4yV6tvXrcSMY6XiWhRE10rblATXCFeFcHqRUNS3bb+3nCBYaZOa5wE3kaZnl82yy04DJv5nzA==');
     await page.getByText('คำขอสำหรับการส่งออก', { exact: true }).click();
     await page.getByText('บริษัท เอส.ดับบลิว เทค แอนด์ มีเดีย จำกัด', { exact: true }).click();
@@ -280,18 +280,19 @@ test('make Pinkform', async ({ page }) => {
     await paymentTerm13.click();
     await paymentTerm13.fill('ใบรับรองมาตรฐานสินค้า (Certificate of Standard)');
     await page.getByRole('option', { name: 'ใบรับรองมาตรฐานสินค้า (Certificate of Standard)' }).nth(0).click();  
-    await page.locator('input[type="file"]').setInputFiles(
-    path.join(os.homedir(), 'Desktop', 'ONLY TEST.PDF'));
+
+    await page.locator('input[type="file"]').setInputFiles(TEST_PDF1);
     await page.getByRole('button', { name: 'บันทึกไฟล์แนบ' }).click();
     await dialog.locator('button:has(.mdi-close)').first().click();
     await page.getByRole('button', { name: 'ถัดไป' }).click();      
-    await page.locator('input[type="file"]').setInputFiles(
-    path.join(os.homedir(), 'Downloads\\P12\\นิติบุคคล', 'SWTECHANDMEDIACOLTD.P12'));
+    await page.locator('input[type="file"]').setInputFiles(TEST_PDF2);
     await page.getByPlaceholder('รหัสผ่านสำหรับเปิดไฟล์ .p12').fill('titp@swtech');
     await page.getByRole('button', { name: 'ตกลง' }).click();
     await page.getByRole('button', { name: 'ยื่นคำขอ' }).click();    
     await page.getByRole('button', { name: 'ตกลง' }).click();
     const requestNo = await page.locator('.text-medium-emphasis.mb-2').first().textContent();
-    console.log('เลขคำขอ:', requestNo?.trim());     
+    console.log('เลขคำขอ:', requestNo?.trim()); 
+    test.setTimeout(0);
+    await page.pause();    
 });
 

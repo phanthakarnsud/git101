@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import path from 'path/win32';
-import os from 'os';
+const TEST_PDF1 = path.join(__dirname, '..', 'test-files', 'ONLY TEST.pdf');
+const TEST_PDF2 = path.join(__dirname, '..', 'test-files', 'SWTECHANDMEDIACOLTD.p12');
+
 
 test('make ePhyto', async ({ page }) => {
     await page.goto('https://submission-sit.thainsw.net/submission/sign-in?id=pbo2uRaPgdg9Sd1uM0zzJtb2N6Tj8HdfW3rtm/ia5t4=&profileName=X9BGhh7Ic0ieQl/eZAFWog==&email=QYNFjVme700jr4yV6tvXrcSMY6XiWhRE10rblATXCFeFcHqRUNS3bb+3nCBYaZOa5wE3kaZnl82yy04DJv5nzA==');
@@ -131,18 +133,16 @@ test('make ePhyto', async ({ page }) => {
 
     await page.getByRole('button', { name: 'เพิ่มข้อมูล' }).nth(4).click();  
     await page.getByPlaceholder('เลขทะเบียน').nth(0).fill('AC03900175123000913/200'); 
-    await page.locator('input[type="file"]').nth(0).setInputFiles(
-    path.join(os.homedir(), 'Desktop', 'ONLY TEST.PDF'));   
+    await page.locator('input[type="file"]').nth(0).setInputFiles(TEST_PDF1);   
     await page.getByPlaceholder('เลขทะเบียน').nth(1).fill('DQ');    
-    await page.locator('input[type="file"]').nth(1).setInputFiles(
-    path.join(os.homedir(), 'Desktop', 'ONLY TEST.PDF'));   
+    await page.locator('input[type="file"]').nth(1).setInputFiles(TEST_PDF1);   
     await page.getByPlaceholder('เลขทะเบียน').nth(2).fill('AAA');   
     await page.getByRole('button', { name: 'ตกลง' }).click();
     await page.getByRole('button', { name: 'ถัดไป' }).click();              
     await page.getByRole('button', { name: 'ถัดไป' }).click();   
-    await page.locator('input[type="file"]').setInputFiles(
-    path.join(os.homedir(), 'Downloads\\P12\\นิติบุคคล', 'SWTECHANDMEDIACOLTD.P12'));
-    console.log('Upload file success');
+
+    await page.locator('input[type="file"]').setInputFiles(TEST_PDF2);
+
     await page.getByPlaceholder('รหัสผ่านสำหรับเปิดไฟล์ .p12').fill('titp@swtech');
     await page.getByRole('button', { name: 'ตกลง' }).click();
     await page.getByRole('button', { name: 'ยื่นคำขอ' }).click();    

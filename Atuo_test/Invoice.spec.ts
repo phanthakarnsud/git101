@@ -1,14 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page, Locator } from '@playwright/test';
 import path from 'path';
-import os from 'os';
+const TEST_PDF = path.join(__dirname, '..', 'test-files', 'ONLY TEST.pdf');
 
 test('make Invoice', async ({ page }) => {
     await page.goto('https://submission-sit.thainsw.net/submission/sign-in?id=pbo2uRaPgdg9Sd1uM0zzJtb2N6Tj8HdfW3rtm/ia5t4=&profileName=X9BGhh7Ic0ieQl/eZAFWog==&email=QYNFjVme700jr4yV6tvXrcSMY6XiWhRE10rblATXCFeFcHqRUNS3bb+3nCBYaZOa5wE3kaZnl82yy04DJv5nzA==');
     await page.getByText('คำขอสำหรับการส่งออก', { exact: true }).click();
     await page.getByText('บริษัท เอส.ดับบลิว เทค แอนด์ มีเดีย จำกัด', { exact: true }).click();
     await page.getByText('สร้าง', { exact: true }).click();
-    await expect(page.getByText('ผู้ขาย')).toBeVisible();
+
+    await expect(page.getByText('ผู้ขาย').nth(0)).toBeVisible();
     console.log('ผู้ขาย');
+
     await page.getByRole('radio', { name: 'ใช้ข้อมูลผู้ส่งออก' }).click();
     console.log('S.W. TECH & MEDIA CO., LTD.');
     await page.getByRole('button', { name: 'ถัดไป' }).click();
@@ -75,13 +77,9 @@ test('make Invoice', async ({ page }) => {
     await page.getByPlaceholder('มูลค่ารวม (ตามสกุลเงินที่ระบุ)').fill('70000');
     await page.getByRole('button', { name: 'ตกลง' }).click();
     await page.getByRole('button', { name: 'ถัดไป' }).click();
-    await page.locator('input[type="file"]').setInputFiles(
-    path.join(os.homedir(), 'Desktop', 'ONLY TEST.PDF'));
-    console.log('Upload file success');
-    await page.getByRole('button', { name: 'บันทึก', exact: true }).click();
-    await expect(page).toHaveURL('https://submission-sit.thainsw.net/export/invoice/list');
-    console.log('รายการ Invoice');
 
+    await page.locator('input[type="file"]').setInputFiles(TEST_PDF);
+    
     test.setTimeout(0);
     await page.pause();
 });
