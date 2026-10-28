@@ -79,7 +79,7 @@ test('make Invoice', async ({ page }) => {
     await page.getByRole('button', { name: 'ถัดไป' }).click();
 
     await page.locator('input[type="file"]').setInputFiles(TEST_PDF);
+    await page.getByRole('button', { name: 'บันทึก' }).nth(1).click();   
     
-    test.setTimeout(0);
-    await page.pause();
+
 });
