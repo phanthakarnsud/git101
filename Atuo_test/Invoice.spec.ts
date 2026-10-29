@@ -77,7 +77,6 @@ test('make Invoice', async ({ page }) => {
     await page.getByPlaceholder('มูลค่ารวม (ตามสกุลเงินที่ระบุ)').fill('70000');
     await page.getByRole('button', { name: 'ตกลง' }).click();
     await page.getByRole('button', { name: 'ถัดไป' }).click();
-
     await page.locator('input[type="file"]').setInputFiles(TEST_PDF);
     await page.getByRole('button', { name: 'บันทึก' }).nth(1).click();   
     
